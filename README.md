@@ -30,7 +30,7 @@ Or as a Docker image:
 ```
 docker run cargomedia/socket-redis ./bin/socket-redis.js --redis-host=my-redis
 ```
-See also the provided [`docker-compose.yaml`](docker-compose.yaml) for reference.
+See also the provided [`docker-compose.yml`](docker-compose.yml) for reference.
 
 
 Available options:
