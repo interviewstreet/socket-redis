@@ -6,7 +6,7 @@
   "bin": {
     "socket-redis": "./bin/socket-redis.js"
   },
-  "repository": "",
+  "repository": "https://github.com/cargomedia/socket-redis",
   "keywords": [
     "redis",
     "sockjs",
@@ -14,7 +14,7 @@
     "bridge"
   ],
   "author": "Cargomedia",
-  "license": "BSD",
+  "license": "MIT",
   "scripts": {
     "test": "$(npm bin)/mocha"
   },
