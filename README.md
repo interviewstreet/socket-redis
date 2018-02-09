@@ -64,9 +64,7 @@ redis-cli 'publish' 'socket-redis-down' '{"type":"publish", "data": {"channel":"
 ### HTTP status API
 Server also answers http status requests (on port 8085 by default).
 
-You can request the state of all subscribers grouped by channels.
-Response schema:
-
+A JSON representation of all current subscribers is returned on `/`:
 ```console
 $ curl 'http://localhost:8085/'
 
@@ -81,6 +79,19 @@ $ curl 'http://localhost:8085/'
 }
 ```
 
+A Prometheus scraping endpoint is responding on `/metrics`:
+```console
+$ curl 'http://localhost:8085/metrics' 
+
+# HELP socketredis_channels_total Number of channels
+# TYPE socketredis_channels_total gauge
+socketredis_channels_total 30
+
+# HELP socketredis_subscribers_total Number of subscribers
+# TYPE socketredis_subscribers_total gauge
+socketredis_subscribers_total 90
+```
+
 Client
 ------
 ### Building
@@ -93,7 +104,7 @@ browserify --standalone SocketRedis ./client/index.js -o ./client/socket-redis.j
 Include the SockJS and socket-redis client libraries in your html file:
 ```html
 <script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
-<script src="https://raw.github.com/cargomedia/socket-redis/master/client/socket-redis.js"></script>
+<script src="./client/socket-redis.js"></script>
 ```
 
 ### Example

@@ -28,6 +28,7 @@
     "bluebird": "^3.4.7",
     "log4js": "~0.6.21",
     "optimist": "~0.6.1",
+    "prom-client": "^10.2.2",
     "redis": "~2.8.0",
     "sockjs": "0.3.17",
     "underscore": "~1.7.0",

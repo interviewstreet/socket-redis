@@ -187,6 +187,28 @@ describe('Server tests', function() {
           done();
         });
     });
+
+    it('returns prometheus format on /metrics', function(done) {
+      var response = requestPromise({uri: statusServerUri + '/metrics', headers: {'Authorization': 'Token ' + STATUS_SECRET}});
+
+      _.delay(function() {
+        var statusRequests = this.server._statusServer.getStatusRequests();
+        assert.strictEqual(_.size(statusRequests), 1);
+        var statusRequest = statusRequests[Object.keys(statusRequests)[0]];
+        statusRequest.addResponse({
+          'channel1': [{'clientKey': 'susbcriber1'}],
+          'channel2': [{'clientKey': 'susbcriber1'}, {'clientKey': 'susbcriber2'}]
+        });
+        statusRequest.emit('complete');
+        assert.strictEqual(_.size(statusRequests), 0);
+      }.bind(this), 100);
+
+      response.then(function(response) {
+        assert.include(response, 'socketredis_channels_total 2');
+        assert.include(response, 'socketredis_subscribers_total 3');
+        done();
+      });
+    });
   });
 
   context('redisClientDown', function() {
