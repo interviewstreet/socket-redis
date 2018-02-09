@@ -18,6 +18,7 @@ describe('Client tests', function() {
     var client;
 
     beforeEach(function(done) {
+      this.timeout(5000);
       var port = 9090;
       server.start(port).then(function() {
         client = new SocketRedis('http://localhost:' + port);
@@ -26,12 +27,14 @@ describe('Client tests', function() {
     });
 
     afterEach(function(done) {
-      client.close();
+      if (client) {
+        client.close();
+      }
       server.stop().then(done, done);
     });
 
     it('pub after sub', function(done) {
-      this.timeout(4000);
+      this.timeout(5000);
       var event = 'event';
       var channelName = 'channel-name';
       var testData = {foo: 'bar'};
@@ -48,7 +51,6 @@ describe('Client tests', function() {
     });
 
     it('pub before sub', function(done) {
-      var event = 'event';
       var channelName = 'channel-name';
       var testData = {foo: 'bar'};
 
@@ -71,6 +73,7 @@ describe('Client tests', function() {
     var client1, client2;
 
     beforeEach(function() {
+      this.timeout(5000);
       var port1 = 9090;
       var port2 = 9091;
       return server.start(port1, port2).then(function() {
@@ -80,14 +83,17 @@ describe('Client tests', function() {
     });
 
     afterEach(function() {
-      client1.close();
-      client2.close();
+      if (client1) {
+        client1.close();
+      }
+      if (client2) {
+        client2.close();
+      }
       return server.stop();
     });
 
     it('pub after sub', function(done) {
       this.timeout(4000);
-      var event = 'event';
       var channelName = 'channel-name';
       var testData = {foo: 'bar'};
 
@@ -107,7 +113,6 @@ describe('Client tests', function() {
     });
 
     it('pub before sub', function(done) {
-      var event = 'event';
       var channelName = 'channel-name';
       var testData = {foo: 'bar'};
 
