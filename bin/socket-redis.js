@@ -56,7 +56,7 @@ if (!process.send) {
     }
     var startWorker = function() {
       var worker = childProcess.fork(__filename, args);
-      console.log('Starting worker `' + worker.pid + '` to listen on port `' + socketPort + '`');
+      console.log('Forking worker  process with PID ' + worker.pid + '...');
       publisher.addWorker(worker);
       worker.on('exit', function() {
         console.error('Worker `' + worker.pid + '` exited');

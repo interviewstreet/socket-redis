@@ -1,12 +1,12 @@
 {
   "name": "socket-redis",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "Redis to SockJS relay",
   "main": "socket-redis.js",
   "bin": {
     "socket-redis": "./bin/socket-redis.js"
   },
-  "repository": "",
+  "repository": "https://github.com/cargomedia/socket-redis",
   "keywords": [
     "redis",
     "sockjs",
@@ -14,7 +14,7 @@
     "bridge"
   ],
   "author": "Cargomedia",
-  "license": "BSD",
+  "license": "MIT",
   "scripts": {
     "test": "$(npm bin)/mocha"
   },
@@ -28,6 +28,7 @@
     "bluebird": "^3.4.7",
     "log4js": "~0.6.21",
     "optimist": "~0.6.1",
+    "prom-client": "^10.2.2",
     "redis": "~2.8.0",
     "sockjs": "0.3.17",
     "underscore": "~1.7.0",

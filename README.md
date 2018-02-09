@@ -5,41 +5,33 @@ socket-redis
 
 [![Version](https://img.shields.io/npm/v/socket-redis.svg)](https://www.npmjs.com/package/socket-redis)
 [![Build Status](https://img.shields.io/travis/cargomedia/socket-redis/master.svg)](https://travis-ci.org/cargomedia/socket-redis)
+[![Docker Hub](https://img.shields.io/badge/Docker_Hub-cargomedia%2Fsocket--redis-22b8eb.svg)](https://hub.docker.com/r/cargomedia/socket-redis/)
 
 About
 -----
-*socket-redis* starts a WebSocket emulation server ([SockJS](http://sockjs.org/)) where clients can connect to, and subscribe to multiple channels.
-The server will let you consume client-related events like `message`, `subscribe` and `unsubscribe` on a [Redis](http://redis.io/) pub/sub channel `socket-redis-up`. Additionally it will subscribe to another pub/sub channel `socket-redis-down` where you can send messages to all clients in a channel.
+*socket-redis* starts a WebSocket server ([SockJS](http://sockjs.org/)) where clients can connect to, and subscribe to multiple channels.
+The server will let you consume client-related events like `message`, `subscribe` and `unsubscribe` on a [Redis](http://redis.io/) pub/sub channel `socket-redis-up`.
+Additionally it will subscribe to another pub/sub channel `socket-redis-down` where you can send messages to all clients in a channel.
 
 When specifying multiple `--socket-ports` the script will spawn a child process for each port. This is provided as a simple way to make use of all your CPU cores.
-
-### Publishing
- - update package.json with a new version
- - release a new git tag with the updated package.json
-
-After that the npm release should be done automatically. If it didn't happen then release it manually:
-```
-npm publish https://github.com/cargomedia/socket-redis/archive/<GitTagWithUpdatedPackageJson>.tar.gz
-```
 
 
 Server
 ------
 
-### Installation
-Package is in nodejs and is available through npm registry:
+### Installation & Configuration
+Package is available through npm registry:
 ```
 npm install socket-redis [-g]
+socket-redis.js --redis-host=my-redis
 ```
 
-
-### Running
-You can run socket-redis using default arguments or specify them on your own.
-
-Example:
-```sh
-socket-redis --socket-ports=8090,8091,8092
+Or as a Docker image:
 ```
+docker run cargomedia/socket-redis ./bin/socket-redis.js --redis-host=my-redis
+```
+See also the provided [`docker-compose.yml`](docker-compose.yml) for reference.
+
 
 Available options:
 - `--redis-host` Specify host of redis server. Defaults to `localhost`.
@@ -49,38 +41,19 @@ Available options:
 - `--log-dir` Directory where log is stored. Script will try to create directory if needed. Defaults to `null` which means it will output to stdout.
 - `--sockjs-client-url` Specify custom url for sockjs-client library.
 - `--status-port` Specify port for http status requests. It should not be publicly accesible. Defaults to `8085`
-- `--status-secret` Specify secret token to allow/deny http status requests.
+- `--status-secret` Specify secret token to allow/deny http status requests (optional).
 - `--ssl-key` Specify ssl private key file. Combine with `ssl-cert` option.
 - `--ssl-cert` Specify ssl public certificate file. Combine with `ssl-key` option. Append CA-chain within this file.
 - `--ssl-pfx` Specify ssl pfx file (key + cert). Overrides `ssl-key` and `ssl-cert` options.
 - `--ssl-passphrase` Specify file containing the ssl passphrase.
 
-#### with Docker
-```
-docker-compose up socket-redis
-```
-
-For development mount the repo into the container:
-```
-docker-compose run --volume $(pwd):/opt/socket-redis --service-ports socket-redis
-```
-
-### Test
-```
-docker-compose run socket-redis ./script/test.sh
-```
-
-For development mount the repo into the container:
-```
-docker-compose run --volume $(pwd):/opt/socket-redis socket-redis ./script/test.sh
-```
-
-### Messages published to redis pub/sub channel `socket-redis-up`:
+### Redis API
+#### Messages published to redis pub/sub channel `socket-redis-up`:
 - `{type: "subscribe", data: {channel: <channel>, clientKey: <clientKey>, data: <subscribe-data>}}`
 - `{type: "unsubscribe", data: {channel: <channel>, clientKey: <clientKey>}}`
 - `{type: "message", data: {clientKey: <clientKey>, data: <data>}}`
 
-### Messages which are detected on redis pub/sub channel `socket-redis-down`:
+#### Messages consumed on redis pub/sub channel `socket-redis-down`:
 - `{type: "publish", data: {channel: <channel>, event: <event>, data: <data>}}`
 
 For example you could publish messages using *Redis CLI*:
@@ -88,12 +61,13 @@ For example you could publish messages using *Redis CLI*:
 redis-cli 'publish' 'socket-redis-down' '{"type":"publish", "data": {"channel":"<channel>", "event":"<event>", "data":"<data>"}}'
 ```
 
-### Status request
-Server also answers http requests (on port 8085 by default). You can request on-demand state of all subscribers grouped by channels.
+### HTTP status API
+Server also answers http status requests (on port 8085 by default).
 
-Status response schema:
+A JSON representation of all current subscribers is returned on `/`:
+```console
+$ curl 'http://localhost:8085/'
 
-```javascript
 {<channel>: {
 	"subscribers": {
 		<clientKey>: {
@@ -103,6 +77,19 @@ Status response schema:
 		}
 	}
 }
+```
+
+A Prometheus scraping endpoint is responding on `/metrics`:
+```console
+$ curl 'http://localhost:8085/metrics' 
+
+# HELP socketredis_channels_total Number of channels
+# TYPE socketredis_channels_total gauge
+socketredis_channels_total 30
+
+# HELP socketredis_subscribers_total Number of subscribers
+# TYPE socketredis_subscribers_total gauge
+socketredis_subscribers_total 90
 ```
 
 Client
@@ -117,7 +104,7 @@ browserify --standalone SocketRedis ./client/index.js -o ./client/socket-redis.j
 Include the SockJS and socket-redis client libraries in your html file:
 ```html
 <script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
-<script src="https://raw.github.com/cargomedia/socket-redis/master/client/socket-redis.js"></script>
+<script src="./client/socket-redis.js"></script>
 ```
 
 ### Example
@@ -144,4 +131,36 @@ socketRedis.publish('channel-name', 'event-name', {foo: 'bar'});
 To send messages to the server:
 ```
 socketRedis.send({foo: 'bar'});
+```
+
+Development
+-----------
+Install dependencies:
+```
+npm install
+```
+
+Build the docker image:
+```
+docker-compose build
+```
+
+#### Running Tests
+```
+docker-compose run --rm --volume $(pwd):/opt/socket-redis socket-redis ./script/test.sh
+```
+
+#### Running the Server
+```
+docker-compose run --volume $(pwd):/opt/socket-redis --service-ports socket-redis
+```
+
+#### Releasing new Versions
+1. Update package.json with a new version
+2. Push a new git tag with the updated package.json
+3. The Travis build should deploy to NPM automatically
+
+If it doesn't work you could release it manually with:
+```
+npm publish https://github.com/cargomedia/socket-redis/archive/<GitTagWithUpdatedPackageJson>.tar.gz
 ```
