@@ -5,6 +5,7 @@ socket-redis
 
 [![Version](https://img.shields.io/npm/v/socket-redis.svg)](https://www.npmjs.com/package/socket-redis)
 [![Build Status](https://img.shields.io/travis/cargomedia/socket-redis/master.svg)](https://travis-ci.org/cargomedia/socket-redis)
+[![Docker Hub](https://img.shields.io/badge/Docker_Hub-cargomedia%2Fsocket--redis-22b8eb.svg)](https://hub.docker.com/r/cargomedia/socket-redis/)
 
 About
 -----
