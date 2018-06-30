@@ -44,8 +44,8 @@ Client.prototype._reopen = function() {
 
   this._reopenTimeout = setTimeout(function() {
     if (this._counter < this._retryAttempts) {
-      this.open();
       this._counter++;
+      this.open();
     } else {
       throw new Error('Reached max retryAttempts');
     }
@@ -57,6 +57,9 @@ Client.prototype._onopen = function() {
   Object.keys(this._subscribes).forEach(function(channel) {
     self._subscribe(channel, self._closeStamp);
   });
+
+  /** Reset counter if connected. */
+  this._counter = 0;
 
   this._closeStamp = null;
   this._sockJS.onmessage = function(event) {
