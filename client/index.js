@@ -6,7 +6,7 @@ var SockJS;
  * @param {String} url
  * @constructor
  */
-function Client(url) {
+function Client(url, retryAttempts) {
   /** @type {String} */
   this._url = url;
   /** @type {SockJS} */
@@ -19,7 +19,17 @@ function Client(url) {
   this._heartbeatTimeout = null;
   /** @type {Number} */
   this._reopenTimeout = null;
+  /** @type {Number} */
+  this._retryAttempts = retryAttempts || 6;
+  /** @type {Number} */
+  this._counter = 0;
+  /** @type {Function} */
+  this._errorCallback = null;
 }
+
+Client.prototype.onCaptureError = function(callback) {
+  this._errorCallback = callback;
+};
 
 Client.prototype.open = function() {
   clearTimeout(this._reopenTimeout);
@@ -39,8 +49,15 @@ Client.prototype._reopen = function() {
   this._sockJS = null;
 
   this._reopenTimeout = setTimeout(function() {
-    this.open();
-  }.bind(this), 1000);
+    if (this._counter < this._retryAttempts) {
+      this._counter++;
+      this.open();
+    } else {
+      if (typeof this._errorCallback === 'function') {
+        this._errorCallback(new Error('Reached max retryAttempts'));
+      }
+    }
+  }.bind(this), 1000 * this._counter);
 };
 
 Client.prototype._onopen = function() {
@@ -48,6 +65,9 @@ Client.prototype._onopen = function() {
   Object.keys(this._subscribes).forEach(function(channel) {
     self._subscribe(channel, self._closeStamp);
   });
+
+  /** Reset counter if connected. */
+  this._counter = 0;
 
   this._closeStamp = null;
   this._sockJS.onmessage = function(event) {
