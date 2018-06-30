@@ -6,7 +6,7 @@ var SockJS;
  * @param {String} url
  * @constructor
  */
-function Client(url, retryAttempts = 3) {
+function Client(url, retryAttempts) {
   /** @type {String} */
   this._url = url;
   /** @type {SockJS} */
@@ -20,7 +20,7 @@ function Client(url, retryAttempts = 3) {
   /** @type {Number} */
   this._reopenTimeout = null;
   /** @type {Number} */
-  this._retryAttempts = retryAttempts;
+  this._retryAttempts = retryAttempts || 3;;
   /** @type {Number} */
   this._counter = 0;
 }
