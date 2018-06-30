@@ -20,10 +20,16 @@ function Client(url, retryAttempts) {
   /** @type {Number} */
   this._reopenTimeout = null;
   /** @type {Number} */
-  this._retryAttempts = retryAttempts || 3;;
+  this._retryAttempts = retryAttempts || 3;
   /** @type {Number} */
   this._counter = 0;
+  /** @type {Function} */
+  this._errorCallback = null;
 }
+
+Client.prototype.onCaptureError = function(callback) {
+  this._errorCallback = callback;
+};
 
 Client.prototype.open = function() {
   clearTimeout(this._reopenTimeout);
@@ -47,7 +53,9 @@ Client.prototype._reopen = function() {
       this._counter++;
       this.open();
     } else {
-      throw new Error('Reached max retryAttempts');
+      if (typeof this._errorCallback === 'function') {
+        this._errorCallback(new Error('Reached max retryAttempts'));
+      }
     }
   }.bind(this), 1000 * this._counter);
 };
