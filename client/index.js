@@ -6,7 +6,7 @@ var SockJS;
  * @param {String} url
  * @constructor
  */
-function Client(url, retryAttempts = null) {
+function Client(url, retryAttempts = 3) {
   /** @type {String} */
   this._url = url;
   /** @type {SockJS} */
@@ -21,6 +21,8 @@ function Client(url, retryAttempts = null) {
   this._reopenTimeout = null;
   /** @type {Number} */
   this._retryAttempts = retryAttempts;
+  /** @type {Number} */
+  this._counter = 0;
 }
 
 Client.prototype.open = function() {
@@ -41,8 +43,13 @@ Client.prototype._reopen = function() {
   this._sockJS = null;
 
   this._reopenTimeout = setTimeout(function() {
-    this.open();
-  }.bind(this), 1000);
+    if (this._counter < this._retryAttempts) {
+      this.open();
+      this._counter++;
+    } else {
+      throw new Error('Reached max retryAttempts');
+    }
+  }.bind(this), 1000 * this._counter);
 };
 
 Client.prototype._onopen = function() {
