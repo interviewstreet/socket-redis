@@ -6,7 +6,7 @@ var SockJS;
  * @param {String} url
  * @constructor
  */
-function Client(url) {
+function Client(url, retryAttempts = null) {
   /** @type {String} */
   this._url = url;
   /** @type {SockJS} */
@@ -19,6 +19,8 @@ function Client(url) {
   this._heartbeatTimeout = null;
   /** @type {Number} */
   this._reopenTimeout = null;
+  /** @type {Number} */
+  this._retryAttempts = retryAttempts;
 }
 
 Client.prototype.open = function() {
