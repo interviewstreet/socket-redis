@@ -20,7 +20,7 @@ function Client(url, retryAttempts) {
   /** @type {Number} */
   this._reopenTimeout = null;
   /** @type {Number} */
-  this._retryAttempts = retryAttempts || 3;
+  this._retryAttempts = retryAttempts || 6;
   /** @type {Number} */
   this._counter = 0;
   /** @type {Function} */
