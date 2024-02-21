@@ -1,6 +1,6 @@
 {
   "name": "socket-redis",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "description": "Redis to SockJS relay",
   "main": "socket-redis.js",
   "bin": {
@@ -31,7 +31,7 @@
     "prom-client": "^10.2.2",
     "redis": "~2.8.0",
     "sockjs": "0.3.17",
-    "underscore": "~1.7.0",
+    "underscore": "^1.12.1",
     "uuid": "^3.0.1",
     "validator": "~3.22.1"
   },
