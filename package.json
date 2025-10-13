@@ -33,7 +33,7 @@
     "sockjs": "0.3.17",
     "underscore": "~1.7.0",
     "uuid": "^3.0.1",
-    "validator": "~3.22.1"
+    "validator": "~13.15.15"
   },
   "devDependencies": {
     "app-root-path": "^2.0.1",
