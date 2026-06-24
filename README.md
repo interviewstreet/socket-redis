@@ -139,6 +139,7 @@ Install dependencies:
 ```
 npm install
 ```
+Requires Node.js 10 or newer.
 
 Build the docker image:
 ```

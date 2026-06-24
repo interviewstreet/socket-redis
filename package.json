@@ -16,7 +16,7 @@
   "author": "Cargomedia",
   "license": "MIT",
   "scripts": {
-    "test": "$(npm bin)/mocha"
+    "test": "mocha"
   },
   "browserify": {
     "transform": "browserify-shim"
@@ -25,15 +25,15 @@
     "sockjs-client": "global:SockJS"
   },
   "dependencies": {
-    "bluebird": "^3.4.7",
-    "log4js": "~0.6.21",
-    "optimist": "~0.6.1",
+    "bluebird": "^3.7.2",
+    "log4js": "^6.9.1",
+    "minimist": "^1.2.8",
     "prom-client": "^10.2.2",
-    "redis": "~2.8.0",
-    "sockjs": "0.3.17",
-    "underscore": "~1.7.0",
+    "redis": "^3.1.2",
+    "sockjs": "^0.3.24",
+    "underscore": "^1.13.8",
     "uuid": "^3.0.1",
-    "validator": "~3.22.1"
+    "validator": "^13.15.35"
   },
   "devDependencies": {
     "app-root-path": "^2.0.1",
@@ -44,6 +44,6 @@
     "mocha": "^2.5.3",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
-    "sockjs-client": "^1.1.1"
+    "sockjs-client": "1.5.2"
   }
 }
