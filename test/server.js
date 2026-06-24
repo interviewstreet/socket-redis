@@ -8,8 +8,10 @@ describe('Server tests', function() {
 
   var redis_connection = {
     'host': process.env.REDIS_HOST || 'localhost',
-    'port': process.env.REDIS_PORT || 6379,
-    'password': process.env.REDIS_PASS || null
+    'port': process.env.REDIS_PORT || 6379
+  };
+  if (process.env.REDIS_PASS) {
+    redis_connection.password = process.env.REDIS_PASS;
   }
   var STATUS_PORT = process.env.STATUS_PORT || 9993;
   var STATUS_SECRET = process.env.STATUS_SECRET || 'secret';
@@ -242,4 +244,3 @@ describe('Server tests', function() {
   });
 
 });
-

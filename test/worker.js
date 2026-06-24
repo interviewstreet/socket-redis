@@ -32,8 +32,12 @@ describe('Worker tests', function() {
     }
   });
 
+  function getWorkerUrl(worker) {
+    return 'http://127.0.0.1:' + worker._httpServer.address().port;
+  }
+
   beforeEach(function() {
-    this.worker = new Worker(process, 9090);
+    this.worker = new Worker(process, 0);
     this.worker._workerSender._send = _.noop;
   });
 
@@ -42,7 +46,7 @@ describe('Worker tests', function() {
   });
 
   it('creates SockJS server', function(done) {
-    var client = new SockjsClient('http://localhost:9090');
+    var client = new SockjsClient(getWorkerUrl(this.worker));
     client.onopen = function() {
       done();
       client.close();
@@ -51,7 +55,7 @@ describe('Worker tests', function() {
 
   context('Proxy of messages', function() {
     beforeEach(function(done) {
-      this.client = new SockjsClient('http://localhost:9090');
+      this.client = new SockjsClient(getWorkerUrl(this.worker));
       this.client.onopen = function() {
         done();
       };
@@ -163,4 +167,3 @@ describe('Worker tests', function() {
 
 
 });
-

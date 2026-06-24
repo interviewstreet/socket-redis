@@ -16,9 +16,17 @@ function Server() {
 Server.prototype.start = function(port) {
   var ports = Array.prototype.slice.call(arguments);
   var command = 'node';
-  var commandArgs = ['bin/socket-redis.js', '--socket-ports'].concat(ports.join(','));
+  var commandArgs = [
+    'bin/socket-redis.js',
+    '--redis-host', process.env.REDIS_HOST || 'localhost',
+    '--redis-port', process.env.REDIS_PORT || '6379',
+    '--socket-ports', ports.join(',')
+  ];
+  if (process.env.REDIS_PASS) {
+    commandArgs.push('--redis-pass', process.env.REDIS_PASS);
+  }
   var options = {
-    cwd: require('app-root-path'),
+    cwd: require('app-root-path').path,
     detached: false,
     capture: ['stdout', 'stderr']
   };
