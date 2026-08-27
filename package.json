@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "bluebird": "^3.4.7",
-    "log4js": "~0.6.21",
+    "log4js": "^6.4.0",
     "optimist": "~0.6.1",
     "prom-client": "^10.2.2",
     "redis": "~2.8.0",
